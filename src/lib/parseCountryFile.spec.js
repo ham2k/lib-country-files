@@ -6,7 +6,9 @@ const ctyCSV = fs.readFileSync(path.join(__dirname, "../../data/bigcty-20220321.
 
 describe("parseCountryFile", () => {
   it("should work", () => {
-    const indexes = parseCountryFile(ctyCSV)
-    expect(Object.values(indexes.entities).length).toEqual(346)
+    const cty = parseCountryFile(ctyCSV)
+    expect(Object.values(cty.entities).length).toEqual(346)
+
+    expect(cty)
   })
 })

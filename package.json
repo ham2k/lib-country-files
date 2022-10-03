@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "type": "commonjs",
   "scripts": {
-    "preprocess": "node ./scripts/preprocess.js"
+    "generate": "node ./scripts/generate.js"
   },
   "exports": {
     ".": "./src/index.js",

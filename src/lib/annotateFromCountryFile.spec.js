@@ -1,5 +1,5 @@
 const { annotateFromCountryFile, setCountryFileData } = require("./annotateFromCountryFile")
-const CTYData = require("../../data/bigcty.json")
+const CTYData = require("../data/bigcty.json")
 
 setCountryFileData(CTYData)
 
@@ -14,7 +14,7 @@ describe("annotateFromCountryFile", () => {
 
   it("should find the Country File version", () => {
     const info = annotateFromCountryFile({ call: "VERSION" })
-    expect(info.entityName).toEqual("Jordan")
+    expect(info.entityName).toEqual("Iraq")
   })
 
   it("should know about exact callsign exceptions", () => {

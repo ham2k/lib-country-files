@@ -27,9 +27,11 @@ function parseCountryFile(data) {
       const offset = Number.parseFloat(lineParts[8])
       entity.tz = offset > 0 ? `GMT+${offset}` : `GMT${offset}`
 
-      indexes.entities[entity.entityPrefix] = entity
+      if (entity.entityPrefix.charAt(0) === "*") {
+        entity.isWAE = true
+      }
 
-      const isWAE = entity.entityPrefix.charAt(0) === "*"
+      indexes.entities[entity.entityPrefix] = entity
 
       lineParts[9]
         .replace(";", "")
@@ -43,10 +45,10 @@ function parseCountryFile(data) {
             if (prefixParts[4]) match.i = Number.parseInt(prefixParts[4].replace(PARENS_REGEXP, ""))
 
             if (prefixParts[1] === "=") {
-              if (isWAE) indexes.exactWAE[prefixParts[2]] = match
+              if (entity.isWAE) indexes.exactWAE[prefixParts[2]] = match
               else indexes.exact[prefixParts[2]] = match
             } else {
-              if (isWAE) indexes.prefixWAE[prefixParts[2]] = match
+              if (entity.isWAE) indexes.prefixWAE[prefixParts[2]] = match
               else indexes.prefix[prefixParts[2]] = match
             }
           }
