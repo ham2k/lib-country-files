@@ -8,13 +8,27 @@ describe("annotateFromCountryFile", () => {
     const info = annotateFromCountryFile({ call: "KI2D", baseCall: "KI2D", prefix: "KI2", isoPrefix: "KI" })
     expect(info.entityPrefix).toEqual("K")
     expect(info.entityName).toEqual("United States")
-    expect(info.cqZone).toEqual(5)
-    expect(info.ituZone).toEqual(8)
   })
 
   it("should find the Country File version", () => {
     const info = annotateFromCountryFile({ call: "VERSION" })
-    expect(info.entityName).toEqual("Iraq")
+    expect(info.entityName).toEqual("Djibouti")
+  })
+
+  it("should annotate from a DXCC code", () => {
+    const info = annotateFromCountryFile({ dxccCode: 291 })
+    expect(info.entityPrefix).toEqual("K")
+    expect(info.entityName).toEqual("United States")
+    expect(info.cqZone).toEqual(5)
+    expect(info.ituZone).toEqual(8)
+  })
+
+  it("should annotate from a prefix code", () => {
+    const info = annotateFromCountryFile({ prefix: "YV" })
+    expect(info.entityPrefix).toEqual("YV")
+    expect(info.entityName).toEqual("Venezuela")
+    expect(info.cqZone).toEqual(9)
+    expect(info.ituZone).toEqual(12)
   })
 
   it("should know about exact callsign exceptions", () => {
@@ -93,5 +107,17 @@ describe("annotateFromCountryFile", () => {
 
     info = annotateFromCountryFile({ call: "KG4ABC/KG4", postindicators: ["KG4"], prefix: "KG4" })
     expect(info.entityPrefix).toEqual("KG4")
+  })
+
+  it("should handle prefixed calls", () => {
+    let info
+    info = annotateFromCountryFile({
+      call: "VP2V/N0CALL",
+      baseCall: "N0CALL",
+      ituPrefix: "VP",
+      prefix: "VP2",
+      preindicator: "VP2V",
+    })
+    expect(info.entityPrefix).toEqual("VP2V")
   })
 })

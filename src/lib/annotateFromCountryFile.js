@@ -5,7 +5,7 @@ function setCountryFileData(indexes) {
 }
 
 function annotateFromCountryFile(info, options = {}) {
-  const { call, baseCall, prefix } = info
+  const { call, baseCall, prefix, preindicator, dxccCode } = info
   let match
 
   match = CTYIndexes.exact[call]
@@ -18,10 +18,13 @@ function annotateFromCountryFile(info, options = {}) {
   }
 
   if (!match) {
-    // If call had an prefix or postfix modifier that replaces the call prefix, then use that for lookup,
+    // If call had a prefix or postfix modifier that replaces the call prefix, then use that for lookup,
     // otherwise use the base part of the callsign, which has been stripped out of any other indicators
     let effectiveCall = baseCall || call || ""
-    if (prefix && effectiveCall && !effectiveCall.startsWith(prefix)) effectiveCall = prefix
+    let effectivePrefix = preindicator || prefix // the preindicator can be longer than a prefix
+
+    if (effectivePrefix && (!effectiveCall || !effectiveCall.startsWith(effectivePrefix)))
+      effectiveCall = effectivePrefix
 
     let i = effectiveCall.length
     while (!match && i > 0) {
@@ -38,18 +41,23 @@ function annotateFromCountryFile(info, options = {}) {
     match = { p: "K" }
   }
 
+  if (!match && dxccCode) {
+    const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode)
+    if (entity) match = { p: entity.entityPrefix }
+  }
+
   if (match?.p) {
     const entity = CTYIndexes.entities[match.p]
-    info.entityPrefix = entity.entityPrefix
-    info.entityName = entity.name
-    info.dxccCode = entity.dxccCode
-    info.continent = match.o || entity.continent
-    info.cqZone = match.c || entity.cqZone
-    info.ituZone = match.i || entity.ituZone
-    info.lat = match.y || entity.lat
-    info.lon = match.x || entity.lon
-    info.locSource = "prefix"
-    info.gmtOffset = entity.gmtOffset
+    info.entityPrefix = info.entityPrefix || entity.entityPrefix
+    info.entityName = info.entityName || entity.name
+    info.dxccCode = info.dxccCode || entity.dxccCode
+    info.continent = info.continent || match.o || entity.continent
+    info.cqZone = info.cqZone || match.c || entity.cqZone
+    info.ituZone = info.ituZone || match.i || entity.ituZone
+    info.lat = info.lat || match.y || entity.lat
+    info.lon = info.lon || match.x || entity.lon
+    info.gmtOffset = info.gmtOffset || entity.gmtOffset
+    info.locSource = info.locSource || "prefix"
   }
 
   return info

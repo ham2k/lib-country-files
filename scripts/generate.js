@@ -4,7 +4,7 @@ const path = require("path")
 
 console.log("Preprocessing Country File")
 
-const ctyCSV = fs.readFileSync(path.join(__dirname, "../data/bigcty-20220920.csv"), "utf8", (err, data) => data)
+const ctyCSV = fs.readFileSync(path.join(__dirname, "../data/bigcty-20221017.csv"), "utf8", (err, data) => data)
 
 const indexes = parseCountryFile(ctyCSV)
 
