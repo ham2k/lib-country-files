@@ -1,4 +1,4 @@
-const { setCountryFileData } = require("./lib/annotateFromCountryFile")
+const { setCountryFileData } = require("./lib/analyzeFromCountryFile")
 const CTYData = require("./data/bigcty.json")
 
 function useBuiltinCountryFile() {

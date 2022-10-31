@@ -4,18 +4,18 @@ function setCountryFileData(indexes) {
   CTYIndexes = indexes
 }
 
-function annotateFromCountryFile(info, options = {}) {
+function analyzeFromCountryFile(info, options = {}) {
   const { call, baseCall, prefix, preindicator, dxccCode } = info
   let match
 
-  match = CTYIndexes.exact[call]
   if (options.wae) {
     match = match || CTYIndexes.exactWAE[call]
   }
-  match = match || (baseCall && CTYIndexes.exact[baseCall])
+  match = CTYIndexes.exact[call]
   if (options.wae) {
     match = match || CTYIndexes.exactWAE[baseCall]
   }
+  match = match || (baseCall && CTYIndexes.exact[baseCall])
 
   if (!match) {
     // If call had a prefix or postfix modifier that replaces the call prefix, then use that for lookup,
@@ -46,24 +46,40 @@ function annotateFromCountryFile(info, options = {}) {
     if (entity) match = { p: entity.entityPrefix }
   }
 
+  const parts = {}
+
   if (match?.p) {
     const entity = CTYIndexes.entities[match.p]
-    info.entityPrefix = info.entityPrefix || entity.entityPrefix
-    info.entityName = info.entityName || entity.name
-    info.dxccCode = info.dxccCode || entity.dxccCode
-    info.continent = info.continent || match.o || entity.continent
-    info.cqZone = info.cqZone || match.c || entity.cqZone
-    info.ituZone = info.ituZone || match.i || entity.ituZone
-    info.lat = info.lat || match.y || entity.lat
-    info.lon = info.lon || match.x || entity.lon
-    info.gmtOffset = info.gmtOffset || entity.gmtOffset
-    info.locSource = info.locSource || "prefix"
+    parts.entityPrefix = entity.entityPrefix
+    parts.entityName = entity.name
+    parts.dxccCode = entity.dxccCode
+    parts.continent = match.o || entity.continent
+    parts.cqZone = match.c || entity.cqZone
+    parts.ituZone = match.i || entity.ituZone
+    parts.lat = match.y || entity.lat
+    parts.lon = match.x || entity.lon
+    parts.gmtOffset = entity.gmtOffset
+    parts.locSource = "prefix"
+    return parts
   }
+}
+
+function annotateFromCountryFile(info, options = {}) {
+  const results = analyzeFromCountryFile(info, options)
+
+  Object.keys(results).forEach((key) => {
+    if (info[key] && info[key] !== results[key]) {
+      info[`${key}Original`] = info[key]
+    }
+
+    info[key] = results[key]
+  })
 
   return info
 }
 
 module.exports = {
   setCountryFileData,
+  analyzeFromCountryFile,
   annotateFromCountryFile,
 }
