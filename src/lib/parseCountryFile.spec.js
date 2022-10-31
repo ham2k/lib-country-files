@@ -2,7 +2,7 @@ const { parseCountryFile } = require("./parseCountryFile")
 const fs = require("fs")
 const path = require("path")
 
-const ctyCSV = fs.readFileSync(path.join(__dirname, "../../data/bigcty-20220321.csv"), "utf8", (err, data) => data)
+const ctyCSV = fs.readFileSync(path.join(__dirname, "../../data/bigcty-20221027.csv"), "utf8", (err, data) => data)
 
 describe("parseCountryFile", () => {
   it("should work", () => {

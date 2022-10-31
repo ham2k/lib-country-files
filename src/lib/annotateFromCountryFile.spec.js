@@ -12,7 +12,7 @@ describe("annotateFromCountryFile", () => {
 
   it("should find the Country File version", () => {
     const info = annotateFromCountryFile({ call: "VERSION" })
-    expect(info.entityName).toEqual("Djibouti")
+    expect(info.entityName).toEqual("Mongolia")
   })
 
   it("should annotate from a DXCC code", () => {
