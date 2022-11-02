@@ -1,4 +1,5 @@
-module.exports = {
+/* eslint-disable */
+export default {
   displayName: "data-country-file",
   preset: "../../../jest.preset.js",
   globals: {

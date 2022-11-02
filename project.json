@@ -1,5 +1,5 @@
 {
-  "root": "libs/data/country-file",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/data/country-file/src",
   "projectType": "library",
   "targets": {
@@ -22,9 +22,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/data/country-file"],
+      "outputs": ["{workspaceRoot}/coverage/libs/data/country-file"],
       "options": {
-        "jestConfig": "libs/data/country-file/jest.config.js",
+        "jestConfig": "libs/data/country-file/jest.config.ts",
         "passWithNoTests": true
       }
     }
