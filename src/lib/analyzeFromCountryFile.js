@@ -60,20 +60,22 @@ function analyzeFromCountryFile(info, options = {}) {
     parts.lon = match.x || entity.lon
     parts.gmtOffset = entity.gmtOffset
     parts.locSource = "prefix"
-    return parts
   }
+  return parts
 }
 
 function annotateFromCountryFile(info, options = {}) {
   const results = analyzeFromCountryFile(info, options)
 
-  Object.keys(results).forEach((key) => {
-    if (info[key] && info[key] !== results[key]) {
-      info[`${key}Original`] = info[key]
-    }
+  if (results) {
+    Object.keys(results).forEach((key) => {
+      if (info[key] && info[key] !== results[key]) {
+        info[`${key}Original`] = info[key]
+      }
 
-    info[key] = results[key]
-  })
+      info[key] = results[key]
+    })
+  }
 
   return info
 }
