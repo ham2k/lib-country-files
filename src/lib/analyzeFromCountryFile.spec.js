@@ -76,27 +76,27 @@ describe("Country File analyzis and annotation", () => {
 
     it("should know about the extended list of countries used for WAE contests", () => {
       let info = analyzeFromCountryFile({ call: "IG9AAA" })
-      expect(info.entityPrefix).toEqual("I")
+      expect(info.entityPrefix).toEqual("I") // Italy
       expect(info.ituZone).toEqual(28)
       expect(info.continent).toEqual("EU")
 
       info = analyzeFromCountryFile({ call: "IG9AAA" }, { wae: true })
-      expect(info.entityPrefix).toEqual("*IG9")
+      expect(info.entityPrefix).toEqual("*IG9") // Italian Africa
       expect(info.ituZone).toEqual(37)
       expect(info.continent).toEqual("AF")
 
-      info = analyzeFromCountryFile({ call: "IY9A" }, { wae: true })
-      expect(info.entityPrefix).toEqual("*IT9")
-      expect(info.ituZone).toEqual(37)
-      expect(info.continent).toEqual("AF")
+      info = analyzeFromCountryFile({ call: "II0OGB" }, { wae: true })
+      expect(info.entityPrefix).toEqual("*IT9") // Sicily
+      expect(info.ituZone).toEqual(28)
+      expect(info.continent).toEqual("EU")
 
       info = analyzeFromCountryFile({ call: "4U1A" }, { wae: false })
-      expect(info.entityPrefix).toEqual("OE")
+      expect(info.entityPrefix).toEqual("OE") // Austria
       expect(info.ituZone).toEqual(28)
       expect(info.continent).toEqual("EU")
 
       info = analyzeFromCountryFile({ call: "4U1A" }, { wae: true })
-      expect(info.entityPrefix).toEqual("*4U1V")
+      expect(info.entityPrefix).toEqual("*4U1V") // UN Vienna
       expect(info.ituZone).toEqual(28)
       expect(info.continent).toEqual("EU")
     })

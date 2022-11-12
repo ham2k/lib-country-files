@@ -11,7 +11,7 @@ function analyzeFromCountryFile(info, options = {}) {
   if (options.wae) {
     match = match || CTYIndexes.exactWAE[call]
   }
-  match = CTYIndexes.exact[call]
+  match = match || CTYIndexes.exact[call]
   if (options.wae) {
     match = match || CTYIndexes.exactWAE[baseCall]
   }
