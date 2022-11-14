@@ -85,6 +85,11 @@ describe("Country File analyzis and annotation", () => {
       expect(info.ituZone).toEqual(37)
       expect(info.continent).toEqual("AF")
 
+      info = analyzeFromCountryFile({ call: "IH9YMC" }, { wae: true })
+      expect(info.entityPrefix).toEqual("*IG9") // Italian Africa
+      expect(info.ituZone).toEqual(37)
+      expect(info.continent).toEqual("AF")
+
       info = analyzeFromCountryFile({ call: "II0OGB" }, { wae: true })
       expect(info.entityPrefix).toEqual("*IT9") // Sicily
       expect(info.ituZone).toEqual(28)

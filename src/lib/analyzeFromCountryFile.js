@@ -1,4 +1,5 @@
 const { CQZONES_FOR_STATES } = require("@ham2k/data/cqzones")
+const { WAE_IOTA } = require("../data/wae-iota.json")
 
 let CTYIndexes = {}
 
@@ -7,7 +8,7 @@ function setCountryFileData(indexes) {
 }
 
 function analyzeFromCountryFile(info, options = {}) {
-  const { call, baseCall, prefix, preindicator, dxccCode, state } = info
+  const { call, baseCall, prefix, preindicator, dxccCode } = info
   let match
 
   if (options.wae) {
@@ -43,6 +44,12 @@ function analyzeFromCountryFile(info, options = {}) {
     match = { p: "K" }
   }
 
+  if (options?.wae && options?.iota) {
+    if (WAE_IOTA[options?.iota]) {
+      match = { p: WAE_IOTA[options?.iota] }
+    }
+  }
+
   if (!match && dxccCode) {
     const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode)
     if (entity) match = { p: entity.entityPrefix }
@@ -64,8 +71,8 @@ function analyzeFromCountryFile(info, options = {}) {
     parts.locSource = "prefix"
   }
 
-  if ((info.state || options.state) && CQZONES_FOR_STATES[parts.entityName]) {
-    const altZone = CQZONES_FOR_STATES[parts.entityName][(info.state || options.state).toUpperCase()]
+  if (options?.state && CQZONES_FOR_STATES[parts.entityName]) {
+    const altZone = CQZONES_FOR_STATES[parts.entityName][options.state.toUpperCase()]
     if (altZone && altZone !== parts.cqZone) {
       parts.cqZone = altZone
     }
