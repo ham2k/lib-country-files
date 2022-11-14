@@ -131,6 +131,29 @@ describe("Country File analyzis and annotation", () => {
       })
       expect(info.entityPrefix).toEqual("VP2V")
     })
+
+    it("should get correct zones for US States", () => {
+      let info
+      // Generic KL7 call
+      info = analyzeFromCountryFile({
+        call: "KL7SANTA",
+      })
+      expect(info.cqZone).toEqual(1)
+
+      // Call that has an exception in Country Files
+      info = analyzeFromCountryFile({
+        // Call that has an exception in Country Files
+        call: "KL7CX",
+      })
+      expect(info.cqZone).toEqual(4)
+
+      // Override if state is given
+      info = analyzeFromCountryFile({
+        call: "KL7CX",
+        state: "MA",
+      })
+      expect(info.cqZone).toEqual(5)
+    })
   })
   describe("annotateFromCountryFile", () => {
     it("should manage conflicts with existing info", () => {

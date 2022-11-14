@@ -1,3 +1,5 @@
+const { CQZONES_FOR_STATES } = require("@ham2k/data/cqzones")
+
 let CTYIndexes = {}
 
 function setCountryFileData(indexes) {
@@ -5,7 +7,7 @@ function setCountryFileData(indexes) {
 }
 
 function analyzeFromCountryFile(info, options = {}) {
-  const { call, baseCall, prefix, preindicator, dxccCode } = info
+  const { call, baseCall, prefix, preindicator, dxccCode, state } = info
   let match
 
   if (options.wae) {
@@ -61,6 +63,14 @@ function analyzeFromCountryFile(info, options = {}) {
     parts.gmtOffset = entity.gmtOffset
     parts.locSource = "prefix"
   }
+
+  if ((info.state || options.state) && CQZONES_FOR_STATES[parts.entityName]) {
+    const altZone = CQZONES_FOR_STATES[parts.entityName][(info.state || options.state).toUpperCase()]
+    if (altZone && altZone !== parts.cqZone) {
+      parts.cqZone = altZone
+    }
+  }
+
   return parts
 }
 
