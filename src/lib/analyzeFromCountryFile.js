@@ -51,7 +51,7 @@ function analyzeFromCountryFile(info, options = {}) {
   }
 
   if (!match && dxccCode) {
-    const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode)
+    const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode && !e.isWAE)
     if (entity) match = { p: entity.entityPrefix }
   }
 
@@ -99,7 +99,7 @@ function annotateFromCountryFile(info, options = {}) {
 }
 
 function fillDXCCfromCountryFile(dxccCode, destination = {}) {
-  const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode)
+  const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode && !e.isWAE)
   if (entity) {
     destination.entityPrefix = destination.entityPrefix || entity.entityPrefix
     destination.entityName = destination.entityName || entity.name
