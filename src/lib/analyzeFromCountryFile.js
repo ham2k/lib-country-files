@@ -83,22 +83,40 @@ function analyzeFromCountryFile(info, options = {}) {
 
 function annotateFromCountryFile(info, options = {}) {
   const results = analyzeFromCountryFile(info, options)
+  const destination = options.destination || info
 
   if (results) {
     Object.keys(results).forEach((key) => {
-      if (info[key] && info[key] !== results[key]) {
-        info[`${key}Original`] = info[key]
+      if (destination[key] && destination[key] !== results[key]) {
+        destination[`${key}Original`] = destination[key]
       }
 
-      info[key] = results[key]
+      destination[key] = results[key]
     })
   }
 
-  return info
+  return destination
+}
+
+function fillDXCCfromCountryFile(dxccCode, destination = {}) {
+  const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode)
+  if (entity) {
+    destination.entityPrefix = destination.entityPrefix || entity.entityPrefix
+    destination.entityName = destination.entityName || entity.name
+    destination.dxccCode = destination.dxccCode || entity.dxccCode
+    destination.continent = destination.continent || entity.continent
+    destination.cqZone = destination.cqZone || entity.cqZone
+    destination.ituZone = destination.ituZone || entity.ituZone
+    destination.lat = destination.lat || entity.lat
+    destination.lon = destination.lon || entity.lon
+    destination.gmtOffset = destination.gmtOffset || entity.gmtOffset
+  }
+  return destination
 }
 
 module.exports = {
   setCountryFileData,
   analyzeFromCountryFile,
   annotateFromCountryFile,
+  fillDXCCfromCountryFile,
 }

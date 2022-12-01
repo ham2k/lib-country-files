@@ -42,6 +42,10 @@ describe("Country File analyzis and annotation", () => {
       info = analyzeFromCountryFile({ call: "KP3Y", baseCall: "KP3Y", prefix: "KP3", isoPrefix: "KP" })
       expect(info.entityPrefix).toEqual("K")
       expect(info.cqZone).toEqual(5)
+
+      // Some callsign exceptions include modifiers
+      info = analyzeFromCountryFile({ call: "SV2/SV1RP/T", baseCall: "SV1RP", prefix: "SV2" })
+      expect(info.entityPrefix).toEqual("SV/a")
     })
 
     it("should know about zones for US States", () => {
@@ -95,6 +99,11 @@ describe("Country File analyzis and annotation", () => {
       expect(info.ituZone).toEqual(28)
       expect(info.continent).toEqual("EU")
 
+      info = analyzeFromCountryFile({ call: "IT4LY" }, { wae: true, iota: "EU-025" })
+      expect(info.entityPrefix).toEqual("*IT9") // Sicily
+      expect(info.ituZone).toEqual(28)
+      expect(info.continent).toEqual("EU")
+
       info = analyzeFromCountryFile({ call: "4U1A" }, { wae: false })
       expect(info.entityPrefix).toEqual("OE") // Austria
       expect(info.ituZone).toEqual(28)
@@ -140,26 +149,19 @@ describe("Country File analyzis and annotation", () => {
     it("should get correct zones for US States", () => {
       let info
       // Generic KL7 call
-      info = analyzeFromCountryFile({
-        call: "KL7SANTA",
-      })
+      info = analyzeFromCountryFile({ call: "KL7SANTA" })
       expect(info.cqZone).toEqual(1)
 
       // Call that has an exception in Country Files
-      info = analyzeFromCountryFile({
-        // Call that has an exception in Country Files
-        call: "KL7CX",
-      })
+      info = analyzeFromCountryFile({ call: "KL7CX" })
       expect(info.cqZone).toEqual(4)
 
       // Override if state is given
-      info = analyzeFromCountryFile({
-        call: "KL7CX",
-        state: "MA",
-      })
+      info = analyzeFromCountryFile({ call: "KL7CX" }, { state: "MA" })
       expect(info.cqZone).toEqual(5)
     })
   })
+
   describe("annotateFromCountryFile", () => {
     it("should manage conflicts with existing info", () => {
       let info = {
