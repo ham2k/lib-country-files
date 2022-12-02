@@ -12,19 +12,19 @@ function analyzeFromCountryFile(info, options = {}) {
   let match
 
   if (options.wae) {
-    match = match || CTYIndexes.exactWAE[call]
+    match = match ?? CTYIndexes.exactWAE[call]
   }
-  match = match || CTYIndexes.exact[call]
+  match = match ?? CTYIndexes.exact[call]
   if (options.wae) {
-    match = match || CTYIndexes.exactWAE[baseCall]
+    match = match ?? CTYIndexes.exactWAE[baseCall]
   }
-  match = match || (baseCall && CTYIndexes.exact[baseCall])
+  match = match ?? (baseCall && CTYIndexes.exact[baseCall])
 
   if (!match) {
     // If call had a prefix or postfix modifier that replaces the call prefix, then use that for lookup,
     // otherwise use the base part of the callsign, which has been stripped out of any other indicators
-    let effectiveCall = baseCall || call || ""
-    let effectivePrefix = preindicator || prefix // the preindicator can be longer than a prefix
+    let effectiveCall = baseCall ?? call ?? ""
+    let effectivePrefix = preindicator ?? prefix // the preindicator can be longer than a prefix
 
     if (effectivePrefix && (!effectiveCall || !effectiveCall.startsWith(effectivePrefix)))
       effectiveCall = effectivePrefix
@@ -34,7 +34,7 @@ function analyzeFromCountryFile(info, options = {}) {
       if (options.wae) {
         match = CTYIndexes.prefixWAE[effectiveCall.slice(0, i)]
       }
-      match = match || CTYIndexes.prefix[effectiveCall.slice(0, i)]
+      match = match ?? CTYIndexes.prefix[effectiveCall.slice(0, i)]
       i--
     }
   }
@@ -62,11 +62,11 @@ function analyzeFromCountryFile(info, options = {}) {
     parts.entityPrefix = entity.entityPrefix
     parts.entityName = entity.name
     parts.dxccCode = entity.dxccCode
-    parts.continent = match.o || entity.continent
-    parts.cqZone = match.c || entity.cqZone
-    parts.ituZone = match.i || entity.ituZone
-    parts.lat = match.y || entity.lat
-    parts.lon = match.x || entity.lon
+    parts.continent = match.o ?? entity.continent
+    parts.cqZone = match.c ?? entity.cqZone
+    parts.ituZone = match.i ?? entity.ituZone
+    parts.lat = match.y ?? entity.lat
+    parts.lon = match.x ?? entity.lon
     parts.gmtOffset = entity.gmtOffset
     parts.locSource = "prefix"
   }
@@ -83,7 +83,7 @@ function analyzeFromCountryFile(info, options = {}) {
 
 function annotateFromCountryFile(info, options = {}) {
   const results = analyzeFromCountryFile(info, options)
-  const destination = options.destination || info
+  const destination = options.destination ?? info
 
   if (results) {
     Object.keys(results).forEach((key) => {
@@ -101,15 +101,15 @@ function annotateFromCountryFile(info, options = {}) {
 function fillDXCCfromCountryFile(dxccCode, destination = {}) {
   const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode && !e.isWAE)
   if (entity) {
-    destination.entityPrefix = destination.entityPrefix || entity.entityPrefix
-    destination.entityName = destination.entityName || entity.name
-    destination.dxccCode = destination.dxccCode || entity.dxccCode
-    destination.continent = destination.continent || entity.continent
-    destination.cqZone = destination.cqZone || entity.cqZone
-    destination.ituZone = destination.ituZone || entity.ituZone
-    destination.lat = destination.lat || entity.lat
-    destination.lon = destination.lon || entity.lon
-    destination.gmtOffset = destination.gmtOffset || entity.gmtOffset
+    destination.entityPrefix = destination.entityPrefix ?? entity.entityPrefix
+    destination.entityName = destination.entityName ?? entity.name
+    destination.dxccCode = destination.dxccCode ?? entity.dxccCode
+    destination.continent = destination.continent ?? entity.continent
+    destination.cqZone = destination.cqZone ?? entity.cqZone
+    destination.ituZone = destination.ituZone ?? entity.ituZone
+    destination.lat = destination.lat ?? entity.lat
+    destination.lon = destination.lon ?? entity.lon
+    destination.gmtOffset = destination.gmtOffset ?? entity.gmtOffset
   }
   return destination
 }
