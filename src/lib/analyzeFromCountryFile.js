@@ -1,4 +1,4 @@
-const { CQZONES_FOR_STATES } = require("@ham2k/data/cqzones")
+const { CQZONES_FOR_STATES } = require("@ham2k/data-cqzones")
 const WAE_IOTA = require("../data/wae-iota.json")
 
 let CTYIndexes = {}
