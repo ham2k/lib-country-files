@@ -1,11 +1,11 @@
-const { setCountryFileData } = require("./lib/analyzeFromCountryFile")
-const CTYData = require("./data/bigcty.json")
+const { setCountryFileData } = require('./lib/analyzeFromCountryFile')
+const CTYData = require('./data/bigcty.json')
 
-function useBuiltinCountryFile() {
+function useBuiltinCountryFile () {
   setCountryFileData(CTYData)
 }
 
 module.exports = {
   CTYData,
-  useBuiltinCountryFile,
+  useBuiltinCountryFile
 }

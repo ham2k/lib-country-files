@@ -1,11 +1,12 @@
-const { parseCountryFile } = require("./parseCountryFile")
-const fs = require("fs")
-const path = require("path")
+const { parseCountryFile } = require('./parseCountryFile')
+const fs = require('fs')
+const path = require('path')
 
-const ctyCSV = fs.readFileSync(path.join(__dirname, "../../data/bigcty-20221114.csv"), "utf8", (err, data) => data)
+/* eslint-disable n/handle-callback-err */
+const ctyCSV = fs.readFileSync(path.join(__dirname, '../../data/bigcty-20230227.csv'), 'utf8', (err, data) => data)
 
-describe("parseCountryFile", () => {
-  it("should work", () => {
+describe('parseCountryFile', () => {
+  it('should work', () => {
     const cty = parseCountryFile(ctyCSV)
     expect(Object.values(cty.entities).length).toEqual(346)
 

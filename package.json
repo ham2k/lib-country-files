@@ -1,12 +1,22 @@
 {
   "name": "@ham2k/lib-country-files",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "commonjs",
-  "scripts": {
-    "generate": "node ./scripts/generate.js"
-  },
   "exports": {
     ".": "./src/index.js",
     "./builtinData": "./src/builtinData.js"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "standard": "^17.0.0"
+  },
+  "scripts": {
+    "generate": "node ./scripts/generate.js",
+    "test": "jest"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ]
   }
 }

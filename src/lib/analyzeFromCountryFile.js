@@ -1,13 +1,13 @@
-const { CQZONES_FOR_STATES } = require("../data/cqz-for-states.json")
-const WAE_IOTA = require("../data/wae-iota.json")
+const CQZONES_FOR_STATES = require('../data/cqz-for-states.json')
+const WAE_IOTA = require('../data/wae-iota.json')
 
 let CTYIndexes = {}
 
-function setCountryFileData(indexes) {
+function setCountryFileData (indexes) {
   CTYIndexes = indexes
 }
 
-function analyzeFromCountryFile(info, options = {}) {
+function analyzeFromCountryFile (info, options = {}) {
   const { call, baseCall, prefix, preindicator, dxccCode } = info
   let match
 
@@ -23,11 +23,10 @@ function analyzeFromCountryFile(info, options = {}) {
   if (!match) {
     // If call had a prefix or postfix modifier that replaces the call prefix, then use that for lookup,
     // otherwise use the base part of the callsign, which has been stripped out of any other indicators
-    let effectiveCall = baseCall ?? call ?? ""
-    let effectivePrefix = preindicator ?? prefix // the preindicator can be longer than a prefix
+    let effectiveCall = baseCall ?? call ?? ''
+    const effectivePrefix = preindicator ?? prefix // the preindicator can be longer than a prefix
 
-    if (effectivePrefix && (!effectiveCall || !effectiveCall.startsWith(effectivePrefix)))
-      effectiveCall = effectivePrefix
+    if (effectivePrefix && (!effectiveCall || !effectiveCall.startsWith(effectivePrefix))) { effectiveCall = effectivePrefix }
 
     let i = effectiveCall.length
     while (!match && i > 0) {
@@ -40,8 +39,8 @@ function analyzeFromCountryFile(info, options = {}) {
   }
 
   // Special case: Guantanamo uses the KG4 prefix, but only for callsigns with 2 suffix letters
-  if (match?.p === "KG4" && call.length !== 5 && !info?.postindicators?.includes("KG4")) {
-    match = { p: "K" }
+  if (match?.p === 'KG4' && call.length !== 5 && !info?.postindicators?.includes('KG4')) {
+    match = { p: 'K' }
   }
 
   if (options?.wae && options?.iota) {
@@ -51,7 +50,7 @@ function analyzeFromCountryFile(info, options = {}) {
   }
 
   if (!match && dxccCode) {
-    const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode && !e.isWAE)
+    const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode === dxccCode && !e.isWAE)
     if (entity) match = { p: entity.entityPrefix }
   }
 
@@ -68,7 +67,7 @@ function analyzeFromCountryFile(info, options = {}) {
     parts.lat = match.y ?? entity.lat
     parts.lon = match.x ?? entity.lon
     parts.gmtOffset = entity.gmtOffset
-    parts.locSource = "prefix"
+    parts.locSource = 'prefix'
   }
 
   if (options?.state && CQZONES_FOR_STATES[parts.entityName]) {
@@ -81,7 +80,7 @@ function analyzeFromCountryFile(info, options = {}) {
   return parts
 }
 
-function annotateFromCountryFile(info, options = {}) {
+function annotateFromCountryFile (info, options = {}) {
   const results = analyzeFromCountryFile(info, options)
   const destination = options.destination ?? info
 
@@ -98,8 +97,8 @@ function annotateFromCountryFile(info, options = {}) {
   return destination
 }
 
-function fillDXCCfromCountryFile(dxccCode, destination = {}) {
-  const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode == dxccCode && !e.isWAE)
+function fillDXCCfromCountryFile (dxccCode, destination = {}) {
+  const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode === dxccCode && !e.isWAE)
   if (entity) {
     destination.entityPrefix = destination.entityPrefix ?? entity.entityPrefix
     destination.entityName = destination.entityName ?? entity.name
@@ -118,5 +117,5 @@ module.exports = {
   setCountryFileData,
   analyzeFromCountryFile,
   annotateFromCountryFile,
-  fillDXCCfromCountryFile,
+  fillDXCCfromCountryFile
 }
