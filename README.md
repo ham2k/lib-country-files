@@ -1,11 +1,4 @@
-# data-country-file
+# lib-country-file
 
-This library was generated with [Nx](https://nx.dev).
+A JavaScript library for using the **Amateur Radio Country Files** data collected by Jim Reisert AD1C and available from https://www.country-files.com/
 
-## Building
-
-Run `nx build data-country-file` to build the library.
-
-## Running unit tests
-
-Run `nx test data-country-file` to execute the unit tests via [Jest](https://jestjs.io).
