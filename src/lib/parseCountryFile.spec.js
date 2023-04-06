@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 /* eslint-disable n/handle-callback-err */
-const ctyCSV = fs.readFileSync(path.join(__dirname, '../../data/bigcty-20230227.csv'), 'utf8', (err, data) => data)
+const ctyCSV = fs.readFileSync(path.join(__dirname, '../../data/bigcty-20230330.csv'), 'utf8', (err, data) => data)
 
 describe('parseCountryFile', () => {
   it('should work', () => {
