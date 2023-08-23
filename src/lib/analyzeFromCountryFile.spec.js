@@ -46,6 +46,10 @@ describe('Country File analyzis and annotation', () => {
       // Some callsign exceptions include modifiers
       info = analyzeFromCountryFile({ call: 'SV2/SV1RP/T', baseCall: 'SV1RP', prefix: 'SV2' })
       expect(info.entityPrefix).toEqual('SV/a')
+
+
+      info = analyzeFromCountryFile({ call: '2R0RMA', baseCall: '2R0RMA', prefix: '2R0' })
+      expect(info.entityPrefix).toEqual('SV/a')
     })
 
     it('should know about zones for US States', () => {
