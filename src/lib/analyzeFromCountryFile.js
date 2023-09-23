@@ -97,8 +97,12 @@ function annotateFromCountryFile (info, options = {}) {
   return destination
 }
 
-function fillDXCCfromCountryFile (dxccCode, destination = {}) {
-  const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode === dxccCode && !e.isWAE)
+function fillDXCCFromCountryFile (info, destination = {}) {
+  const { dxccCode, entityPrefix } = info
+
+  let entity = CTYIndexes.entities[entityPrefix]
+
+  entity = entity ?? Object.values(CTYIndexes.entities).find((e) => e.dxccCode === dxccCode && !e.isWAE)
   if (entity) {
     destination.entityPrefix = destination.entityPrefix ?? entity.entityPrefix
     destination.entityName = destination.entityName ?? entity.name
@@ -117,5 +121,5 @@ module.exports = {
   setCountryFileData,
   analyzeFromCountryFile,
   annotateFromCountryFile,
-  fillDXCCfromCountryFile
+  fillDXCCFromCountryFile
 }

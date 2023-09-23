@@ -1,4 +1,4 @@
-const { analyzeFromCountryFile, annotateFromCountryFile, setCountryFileData } = require('./analyzeFromCountryFile')
+const { analyzeFromCountryFile, annotateFromCountryFile, fillDXCCFromCountryFile, setCountryFileData } = require('./analyzeFromCountryFile')
 const CTYData = require('../data/bigcty.json')
 
 setCountryFileData(CTYData)
@@ -185,6 +185,40 @@ describe('Country File analyzis and annotation', () => {
       expect(info.entityPrefixOriginal).toEqual(undefined)
       expect(info.entityName).toEqual('United States')
       expect(info.entityNameOriginal).toEqual('USA')
+    })
+  })
+
+  describe('fillDXCCFromCountryFile', () => {
+    it('should work', () => {
+      const info = fillDXCCFromCountryFile({ dxccCode: 291 })
+      expect(info.entityPrefix).toEqual('K')
+      expect(info.entityName).toEqual('United States')
+    })
+
+    it('should annotate from a DXCC Prefix', () => {
+      const info = fillDXCCFromCountryFile({ entityPrefix: 'K' })
+      expect(info.entityPrefix).toEqual('K')
+      expect(info.entityName).toEqual('United States')
+    })
+
+    it('entity prefix takes precedence', () => {
+      const info = fillDXCCFromCountryFile({ entityPrefix: 'K', dxccCode: 290 })
+      expect(info.entityPrefix).toEqual('K')
+      expect(info.entityName).toEqual('United States')
+    })
+
+    it('should annotate from a DXCC Prefix for WAE entities', () => {
+      const info = fillDXCCFromCountryFile({ entityPrefix: '*4U1V', dxccCode: 1 })
+      expect(info.entityPrefix).toEqual('*4U1V')
+      expect(info.entityName).toEqual('Vienna Intl Ctr')
+      expect(info.dxccCode).toEqual(206)
+    })
+
+    it('should fall back to DXCC code if prefix is not found', () => {
+      const info = fillDXCCFromCountryFile({ entityPrefix: '*4U1VXXX', dxccCode: 206 })
+      expect(info.entityPrefix).toEqual('OE')
+      expect(info.entityName).toEqual('Austria')
+      expect(info.dxccCode).toEqual(206)
     })
   })
 })
