@@ -1,9 +1,9 @@
 const { parseCountryFile } = require('./lib/parseCountryFile')
-const { setCountryFileData, annotateFromCountryFile, fillDXCCfromCountryFile } = require('./lib/analyzeFromCountryFile')
+const { setCountryFileData, annotateFromCountryFile, fillDXCCFromCountryFile } = require('./lib/analyzeFromCountryFile')
 
 module.exports = {
   annotateFromCountryFile,
   parseCountryFile,
-  fillDXCCfromCountryFile,
+  fillDXCCFromCountryFile,
   setCountryFileData
 }
