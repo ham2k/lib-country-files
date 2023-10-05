@@ -1,14 +1,29 @@
 const CQZONES_FOR_STATES = require('../data/cqz-for-states.json')
-const WAE_IOTA = require('../data/wae-iota.json')
+const { CQWW_ENTITIES } = require('@ham2k/lib-cqmag-data')
+
+const WAE_IOTA = Object.values(CQWW_ENTITIES)
+  .filter(x => x.iota)
+  .reduce((h, x) => ({...h, [x.iota]: x, [x.iota2 ?? x.iota]: x}), {})
+const WAE_REGIONS = Object.values(CQWW_ENTITIES)
+  .filter(x => x.regionCode)
+  .reduce((h, x) => ({...h, [x.regionCode]: x}), {})
 
 let CTYIndexes = {}
+let DXCC_ENTITIES_BY_CODE = {}
 
 function setCountryFileData (indexes) {
   CTYIndexes = indexes
+  DXCC_ENTITIES_BY_CODE = Object.values(indexes.entities)
+    .filter((e) => !e.isWAE)
+    .reduce((h, e) => ({...h, [e.dxccCode]: e}), {})
+
+  Object.values(WAE_REGIONS).forEach(x => {
+    CTYIndexes.entities[x.entityPrefix].regionCode = x.regionCode
+  })
 }
 
 function analyzeFromCountryFile (info, options = {}) {
-  const { call, baseCall, prefix, preindicator, dxccCode } = info
+  const { call, baseCall, prefix, preindicator, dxccCode, regionCode, state, entityPrefix } = info
   let match
 
   if (options.wae) {
@@ -36,27 +51,32 @@ function analyzeFromCountryFile (info, options = {}) {
       match = match ?? CTYIndexes.prefix[effectiveCall.slice(0, i)]
       i--
     }
-  }
 
-  // Special case: Guantanamo uses the KG4 prefix, but only for callsigns with 2 suffix letters
-  if (match?.p === 'KG4' && call.length !== 5 && !info?.postindicators?.includes('KG4')) {
-    match = { p: 'K' }
-  }
-
-  if (options?.wae && options?.iota) {
-    if (WAE_IOTA[options?.iota]) {
-      match = { p: WAE_IOTA[options?.iota] }
+    // We only override with Region or IOTA if the match is not an exact match
+    if (regionCode && WAE_REGIONS[regionCode]) {
+      match = { ...match, p: WAE_REGIONS[regionCode].entityPrefix }
+    }
+    if (options?.wae && WAE_IOTA[options?.refs?.iota?.ref]) {
+      match = { ...match, p: WAE_IOTA[options.refs.iota.ref].entityPrefix }
     }
   }
 
-  if (!match && dxccCode) {
-    const entity = Object.values(CTYIndexes.entities).find((e) => e.dxccCode === dxccCode && !e.isWAE)
-    if (entity) match = { p: entity.entityPrefix }
+  // Special case: Guantanamo uses the KG4 prefix, but only for callsigns with 2 suffix letters
+  if (match?.p === 'KG4' && call && call.length !== 5 && !info?.postindicators?.includes('KG4')) {
+    match = { p: 'K' }
+  }
+
+  if (!match && CTYIndexes.entities[entityPrefix]) {
+    match = { p: entityPrefix }
+  }
+
+  if (!match && dxccCode && DXCC_ENTITIES_BY_CODE[dxccCode]) {
+    match = { p: DXCC_ENTITIES_BY_CODE[dxccCode].entityPrefix }
   }
 
   const parts = {}
 
-  if (match?.p) {
+  if (CTYIndexes.entities[match.p]) {
     const entity = CTYIndexes.entities[match.p]
     parts.entityPrefix = entity.entityPrefix
     parts.entityName = entity.name
@@ -64,14 +84,15 @@ function analyzeFromCountryFile (info, options = {}) {
     parts.continent = match.o ?? entity.continent
     parts.cqZone = match.c ?? entity.cqZone
     parts.ituZone = match.i ?? entity.ituZone
+    if (match.regionCode ?? entity.regionCode) { parts.regionCode = match.regionCode ?? entity.regionCode }
     parts.lat = match.y ?? entity.lat
     parts.lon = match.x ?? entity.lon
     parts.gmtOffset = entity.gmtOffset
     parts.locSource = 'prefix'
   }
 
-  if (options?.state && CQZONES_FOR_STATES[parts.entityName]) {
-    const altZone = CQZONES_FOR_STATES[parts.entityName][options.state.toUpperCase()]
+  if (state && CQZONES_FOR_STATES[parts.entityName]) {
+    const altZone = CQZONES_FOR_STATES[parts.entityName][state.toUpperCase()]
     if (altZone && altZone !== parts.cqZone) {
       parts.cqZone = altZone
     }
@@ -97,29 +118,8 @@ function annotateFromCountryFile (info, options = {}) {
   return destination
 }
 
-function fillDXCCFromCountryFile (info, destination = {}) {
-  const { dxccCode, entityPrefix } = info
-
-  let entity = CTYIndexes.entities[entityPrefix]
-
-  entity = entity ?? Object.values(CTYIndexes.entities).find((e) => e.dxccCode === dxccCode && !e.isWAE)
-  if (entity) {
-    destination.entityPrefix = destination.entityPrefix ?? entity.entityPrefix
-    destination.entityName = destination.entityName ?? entity.name
-    destination.dxccCode = destination.dxccCode ?? entity.dxccCode
-    destination.continent = destination.continent ?? entity.continent
-    destination.cqZone = destination.cqZone ?? entity.cqZone
-    destination.ituZone = destination.ituZone ?? entity.ituZone
-    destination.lat = destination.lat ?? entity.lat
-    destination.lon = destination.lon ?? entity.lon
-    destination.gmtOffset = destination.gmtOffset ?? entity.gmtOffset
-  }
-  return destination
-}
-
 module.exports = {
   setCountryFileData,
   analyzeFromCountryFile,
-  annotateFromCountryFile,
-  fillDXCCFromCountryFile
+  annotateFromCountryFile
 }
