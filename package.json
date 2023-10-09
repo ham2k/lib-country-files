@@ -1,10 +1,9 @@
 {
   "name": "@ham2k/lib-country-files",
-  "version": "0.3.20230930",
+  "version": "0.4.20230930",
   "type": "commonjs",
   "exports": {
-    ".": "./src/index.js",
-    "./builtinData": "./src/builtinData.js"
+    ".": "./src/index.js"
   },
   "devDependencies": {
     "jest": "^29.5.0",
