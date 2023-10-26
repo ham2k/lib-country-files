@@ -56,8 +56,11 @@ function analyzeFromCountryFile (info, options = {}) {
     if (regionCode && WAE_REGIONS[regionCode]) {
       match = { ...match, p: WAE_REGIONS[regionCode].entityPrefix }
     }
-    if (options?.wae && WAE_IOTA[options?.refs?.iota?.ref]) {
-      match = { ...match, p: WAE_IOTA[options.refs.iota.ref].entityPrefix }
+    if (options?.wae && options?.refs?.iota) {
+      const iota = Object.keys(options.refs.iota).find((key) => WAE_IOTA[key])
+      if (iota) {
+        match = { ...match, p: WAE_IOTA[iota].entityPrefix }
+      }
     }
   }
 

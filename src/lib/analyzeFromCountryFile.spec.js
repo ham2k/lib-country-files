@@ -104,7 +104,7 @@ describe('Country File analyzis and annotation', () => {
       expect(info.ituZone).toEqual(28)
       expect(info.continent).toEqual('EU')
 
-      info = analyzeFromCountryFile({ call: 'IT4LY' }, { wae: true, refs: { iota: { ref: 'EU-025' }}})
+      info = analyzeFromCountryFile({ call: 'IT4LY' }, { wae: true, refs: { iota: { 'EU-025': true }}})
       expect(info.entityPrefix).toEqual('*IT9') // Sicily
       expect(info.ituZone).toEqual(28)
       expect(info.continent).toEqual('EU')
