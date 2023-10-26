@@ -1,6 +1,5 @@
 const { parseCountryFile } = require('./lib/parseCountryFile')
 const { setCountryFileData, annotateFromCountryFile, fillDXCCFromCountryFile } = require('./lib/analyzeFromCountryFile')
-const { setCountryFileData } = require('./lib/analyzeFromCountryFile')
 const CTYData = require('./data/bigcty.json')
 
 function useBuiltinCountryFile () {
@@ -11,7 +10,7 @@ module.exports = {
   annotateFromCountryFile,
   parseCountryFile,
   fillDXCCFromCountryFile,
-  setCountryFileData
+  setCountryFileData,
   CTYData,
   useBuiltinCountryFile
 }
