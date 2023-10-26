@@ -19,6 +19,6 @@
     ]
   },
   "dependencies": {
-    "@ham2k/lib-cqmag-data": "^0.0.11"
+    "@ham2k/lib-cqmag-data": "^0.0.13"
   }
 }

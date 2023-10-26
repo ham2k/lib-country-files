@@ -116,6 +116,18 @@ describe('Country File analyzis and annotation', () => {
       expect(info.continent).toEqual('EU')
       expect(info.regionCode).toEqual("SY")
 
+      info = analyzeFromCountryFile({ call: 'TA9IOTA' }, { wae: false, refs: { iota: { 'EU-186': true }}})
+      expect(info.entityPrefix).toEqual('TA') // Turkey
+      expect(info.ituZone).toEqual(39)
+      expect(info.continent).toEqual('AS')
+      expect(info.regionCode).toEqual(undefined)
+
+      info = analyzeFromCountryFile({ call: 'TA9IOTA' }, { wae: true, refs: { iota: { 'EU-186': true }}})
+      expect(info.entityPrefix).toEqual('*TA1') // European Turkey
+      expect(info.ituZone).toEqual(39)
+      expect(info.continent).toEqual('EU')
+      expect(info.regionCode).toEqual("ET")
+
       info = analyzeFromCountryFile({ call: '4U1A' }, { wae: false })
       expect(info.entityPrefix).toEqual('OE') // Austria
       expect(info.ituZone).toEqual(28)
