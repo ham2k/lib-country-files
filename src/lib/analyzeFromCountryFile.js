@@ -79,7 +79,7 @@ function analyzeFromCountryFile (info, options = {}) {
 
   const parts = {}
 
-  if (CTYIndexes.entities[match.p]) {
+  if (match?.p && CTYIndexes.entities[match.p]) {
     const entity = CTYIndexes.entities[match.p]
     parts.entityPrefix = entity.entityPrefix
     parts.entityName = entity.name
