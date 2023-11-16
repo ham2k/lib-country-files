@@ -35,6 +35,10 @@ function analyzeFromCountryFile (info, options = {}) {
   }
   match = match ?? (baseCall && CTYIndexes.exact[baseCall])
 
+  if (match) {
+    match.matchSource = 'exact'
+  }
+
   if (!match) {
     // If call had a prefix or postfix modifier that replaces the call prefix, then use that for lookup,
     // otherwise use the base part of the callsign, which has been stripped out of any other indicators
@@ -51,30 +55,34 @@ function analyzeFromCountryFile (info, options = {}) {
       match = match ?? CTYIndexes.prefix[effectiveCall.slice(0, i)]
       i--
     }
+    if (match) {
+      match.matchSource = 'prefix'
+    }
 
     // We only override with Region or IOTA if the match is not an exact match
-    if (regionCode && WAE_REGIONS[regionCode]) {
-      match = { ...match, p: WAE_REGIONS[regionCode].entityPrefix }
+    if (options?.wae && regionCode && WAE_REGIONS[regionCode]) {
+      match = { ...match, p: WAE_REGIONS[regionCode].entityPrefix, match: 'region', matchNote: `ADIF references Region Code ${regionCode}` }
     }
+
     if (options?.wae && options?.refs?.iota) {
       const iota = Object.keys(options.refs.iota).find((key) => WAE_IOTA[key])
       if (iota) {
-        match = { ...match, p: WAE_IOTA[iota].entityPrefix }
+        match = { ...match, p: WAE_IOTA[iota].entityPrefix, matchSource: 'iota', matchNote: `ADIF references IOTA ${iota}` }
       }
     }
   }
 
   // Special case: Guantanamo uses the KG4 prefix, but only for callsigns with 2 suffix letters
   if (match?.p === 'KG4' && call && call.length !== 5 && !info?.postindicators?.includes('KG4')) {
-    match = { p: 'K' }
+    match = { p: 'K', matchSource: 'exception', matchNote: 'Guantanamo uses KG4 prefix, but only for callsigns with 2 suffix letters' }
   }
 
   if (!match && CTYIndexes.entities[entityPrefix]) {
-    match = { p: entityPrefix }
+    match = { p: entityPrefix, matchSource: 'entity prefix' }
   }
 
   if (!match && dxccCode && DXCC_ENTITIES_BY_CODE[dxccCode]) {
-    match = { p: DXCC_ENTITIES_BY_CODE[dxccCode].entityPrefix }
+    match = { p: DXCC_ENTITIES_BY_CODE[dxccCode].entityPrefix, matchSource: 'dxcc code' }
   }
 
   const parts = {}
@@ -87,10 +95,12 @@ function analyzeFromCountryFile (info, options = {}) {
     parts.continent = match.o ?? entity.continent
     parts.cqZone = match.c ?? entity.cqZone
     parts.ituZone = match.i ?? entity.ituZone
-    if (match.regionCode ?? entity.regionCode) { parts.regionCode = match.regionCode ?? entity.regionCode }
+    if (match.regionCode ?? entity.regionCode) parts.regionCode = match.regionCode ?? entity.regionCode
     parts.lat = match.y ?? entity.lat
     parts.lon = match.x ?? entity.lon
     parts.gmtOffset = entity.gmtOffset
+    if (match.matchSource) parts.matchSource = match.matchSource
+    if (match.matchNote) parts.matchNote = match.matchNote
     parts.locSource = 'prefix'
   }
 
