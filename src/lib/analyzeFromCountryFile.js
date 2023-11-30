@@ -60,14 +60,14 @@ function analyzeFromCountryFile (info, options = {}) {
     }
 
     // We only override with Region or IOTA if the match is not an exact match
-    if (options?.wae && regionCode && WAE_REGIONS[regionCode]) {
-      match = { ...match, p: WAE_REGIONS[regionCode].entityPrefix, match: 'wae region', matchNote: `ADIF references Region Code ${regionCode}` }
-    }
-
-    if (options?.wae && options?.refs?.iota) {
-      const iota = Object.keys(options.refs.iota).find((key) => WAE_IOTA[key])
-      if (iota) {
-        match = { ...match, p: WAE_IOTA[iota].entityPrefix, matchSource: 'wae iota', matchNote: `ADIF references IOTA ${iota}` }
+    if (options?.wae) {
+      if (regionCode && WAE_REGIONS[regionCode]) {
+        match = { ...match, p: WAE_REGIONS[regionCode].entityPrefix, matchSource: 'wae region', matchNote: `ADIF references Region Code ${regionCode}` }
+      } else if (options?.refs?.iota) {
+        const iota = Object.keys(options.refs.iota).find((key) => WAE_IOTA[key])
+        if (iota) {
+          match = { ...match, p: WAE_IOTA[iota].entityPrefix, matchSource: 'wae iota', matchNote: `ADIF references IOTA ${iota}` }
+        }
       }
     }
   }
