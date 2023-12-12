@@ -1,5 +1,5 @@
-const CQZONES_FOR_STATES = require('../data/cqz-for-states.json')
-const { CQWW_ENTITIES } = require('@ham2k/lib-cqmag-data')
+import CQZONES_FOR_STATES from '../data/cqz-for-states.json'
+import { CQWW_ENTITIES } from '@ham2k/lib-cqmag-data'
 
 const WAE_IOTA = Object.values(CQWW_ENTITIES)
   .filter(x => x.iota)
@@ -11,7 +11,7 @@ const WAE_REGIONS = Object.values(CQWW_ENTITIES)
 let CTYIndexes = {}
 let DXCC_ENTITIES_BY_CODE = {}
 
-function setCountryFileData (indexes) {
+export function setCountryFileData (indexes) {
   CTYIndexes = indexes
   DXCC_ENTITIES_BY_CODE = Object.values(indexes.entities)
     .filter((e) => !e.isWAE)
@@ -22,7 +22,7 @@ function setCountryFileData (indexes) {
   })
 }
 
-function analyzeFromCountryFile (info, options = {}) {
+export function analyzeFromCountryFile (info, options = {}) {
   const { call, baseCall, prefix, preindicator, dxccCode, regionCode, state, entityPrefix } = info
   let match
 
@@ -114,7 +114,7 @@ function analyzeFromCountryFile (info, options = {}) {
   return parts
 }
 
-function annotateFromCountryFile (info, options = {}) {
+export function annotateFromCountryFile (info, options = {}) {
   const results = analyzeFromCountryFile(info, options)
   const destination = options.destination ?? info
 
@@ -129,10 +129,4 @@ function annotateFromCountryFile (info, options = {}) {
   }
 
   return destination
-}
-
-module.exports = {
-  setCountryFileData,
-  analyzeFromCountryFile,
-  annotateFromCountryFile
 }

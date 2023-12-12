@@ -1,5 +1,5 @@
-const { analyzeFromCountryFile, annotateFromCountryFile, setCountryFileData } = require('./analyzeFromCountryFile')
-const CTYData = require('../data/bigcty.json')
+import { analyzeFromCountryFile, annotateFromCountryFile, setCountryFileData } from './analyzeFromCountryFile'
+import CTYData from '../data/bigcty.json'
 
 setCountryFileData(CTYData)
 

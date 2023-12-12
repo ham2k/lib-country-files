@@ -2,7 +2,7 @@ const END_OF_LINE_REGEXP = /\r?\n\s*/
 const PREFIX_REGEXP = /(={0,1})([A-Z0-9/]+)(\(\d+\)){0,1}(\[\d+\]){0,1}/
 const PARENS_REGEXP = /[()[\]]/
 
-function parseCountryFile (data) {
+export function parseCountryFile (data) {
   const lines = data.split(END_OF_LINE_REGEXP)
   const indexes = {
     entities: {},
@@ -57,8 +57,4 @@ function parseCountryFile (data) {
   })
 
   return indexes
-}
-
-module.exports = {
-  parseCountryFile
 }
