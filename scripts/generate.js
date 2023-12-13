@@ -9,6 +9,7 @@ const ctyCSV = fs.readFileSync('data/bigcty-20231212.csv', 'utf8', (err, data) =
 
 const indexes = parseCountryFile(ctyCSV)
 
-fs.writeFileSync('data/bigcty.json', JSON.stringify(indexes), 'utf8')
+fs.writeFileSync('src/data/bigcty.json', JSON.stringify(indexes), 'utf8')
+fs.writeFileSync('src/data/bigcty.js', `export const BIGCTY = ${JSON.stringify(indexes)}`, 'utf8')
 
 console.log('Done. Output written to data/bigcty.json')

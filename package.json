@@ -1,14 +1,14 @@
 {
   "name": "@ham2k/lib-country-files",
-  "version": "0.8.20231213",
+  "version": "0.9.20231214",
   "type": "module",
   "main": "./src/index.js",
   "exports": {
     ".": "./src/index.js"
   },
   "devDependencies": {
-    "jest": "^29.5.0",
-    "standard": "^17.0.0"
+    "jest": "^29",
+    "standard": "^17"
   },
   "scripts": {
     "generate": "node ./scripts/generate.js",
@@ -20,6 +20,6 @@
     ]
   },
   "dependencies": {
-    "@ham2k/lib-cqmag-data": "^0.1"
+    "@ham2k/lib-cqmag-data": "^0.2"
   }
 }

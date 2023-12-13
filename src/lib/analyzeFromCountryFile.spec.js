@@ -1,9 +1,11 @@
 import { analyzeFromCountryFile, annotateFromCountryFile, setCountryFileData } from './analyzeFromCountryFile'
-import CTYData from '../data/bigcty.json' assert { type: 'json' }
-
-setCountryFileData(CTYData)
+import { useBuiltinCountryFile } from '../index.js'
 
 describe('Country File analyzis and annotation', () => {
+  beforeAll(() => {
+    useBuiltinCountryFile()
+  })
+
   describe('analyzeFromCountryFile', () => {
     it('should work', () => {
       const info = analyzeFromCountryFile({ call: 'KI2D', baseCall: 'KI2D', prefix: 'KI2', isoPrefix: 'KI' })
@@ -13,7 +15,7 @@ describe('Country File analyzis and annotation', () => {
 
     it('should find the Country File version', () => {
       const info = analyzeFromCountryFile({ call: 'VERSION' })
-      expect(info.entityName).toEqual('ITU HQ')
+      expect(info.entityName).toEqual('North Cook Islands')
     })
 
     it('should annotate from a DXCC code', () => {

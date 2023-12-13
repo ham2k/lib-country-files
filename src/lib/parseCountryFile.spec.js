@@ -1,6 +1,5 @@
 import { parseCountryFile } from './parseCountryFile'
 import fs from 'fs'
-import path from 'path'
 
 /* eslint-disable n/handle-callback-err */
 const ctyCSV = fs.readFileSync('data/bigcty-20231212.csv', 'utf8', (err, data) => data)

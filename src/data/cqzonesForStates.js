@@ -1,4 +1,4 @@
-{
+export const CQZONES_FOR_STATES = {
   "Canada": {
     "AB": 4,
     "BC": 3,

@@ -1,11 +1,10 @@
 export * from './lib/parseCountryFile.js'
 export * from './lib/analyzeFromCountryFile.js'
+export * from './data/bigcty.js'
 
-import { setCountryFileData } from './lib/parseCountryFile.js'
-import bigcty from './data/bigcty.json' assert { type: 'json' }
+import { setCountryFileData } from './lib/analyzeFromCountryFile.js'
+import { BIGCTY } from './data/bigcty.js'
 
 export function useBuiltinCountryFile () {
-  setCountryFileData(bigcty)
+  setCountryFileData(BIGCTY)
 }
-
-export const CTYData = bigcty

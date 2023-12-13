@@ -1,10 +1,11 @@
-import CQZONES_FOR_STATES from '../data/cqz-for-states.json' assert { type: 'json' }
-import { CQWW_ENTITIES } from '@ham2k/lib-cqmag-data'
+import { CQWW_ENTITIES_BY_PREFIX } from '@ham2k/lib-cqmag-data'
 
-const WAE_IOTA = Object.values(CQWW_ENTITIES)
+import { CQZONES_FOR_STATES } from '../data/cqzonesForStates.js'
+
+const WAE_IOTA = Object.values(CQWW_ENTITIES_BY_PREFIX)
   .filter(x => x.iota)
   .reduce((h, x) => ({...h, [x.iota]: x, [x.iota2 ?? x.iota]: x}), {})
-const WAE_REGIONS = Object.values(CQWW_ENTITIES)
+const WAE_REGIONS = Object.values(CQWW_ENTITIES_BY_PREFIX)
   .filter(x => x.regionCode)
   .reduce((h, x) => ({...h, [x.regionCode]: x}), {})
 
