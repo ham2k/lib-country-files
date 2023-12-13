@@ -1,6 +1,6 @@
 {
   "name": "@ham2k/lib-country-files",
-  "version": "0.8.20231131",
+  "version": "0.8.20231212",
   "type": "module",
   "main": "./src/index.js",
   "exports": {
@@ -20,6 +20,6 @@
     ]
   },
   "dependencies": {
-    "@ham2k/lib-cqmag-data": "^0.0.14"
+    "@ham2k/lib-cqmag-data": "^0.1"
   }
 }

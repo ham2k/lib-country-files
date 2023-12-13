@@ -1,5 +1,5 @@
 import { analyzeFromCountryFile, annotateFromCountryFile, setCountryFileData } from './analyzeFromCountryFile'
-import CTYData from '../data/bigcty.json'
+import CTYData from '../data/bigcty.json' assert { type: 'json' }
 
 setCountryFileData(CTYData)
 
