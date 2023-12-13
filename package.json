@@ -1,6 +1,6 @@
 {
   "name": "@ham2k/lib-country-files",
-  "version": "0.8.20231212",
+  "version": "0.8.20231213",
   "type": "module",
   "main": "./src/index.js",
   "exports": {

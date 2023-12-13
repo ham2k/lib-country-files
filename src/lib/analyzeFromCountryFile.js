@@ -1,4 +1,4 @@
-import CQZONES_FOR_STATES from '../data/cqz-for-states.json'
+import CQZONES_FOR_STATES from '../data/cqz-for-states.json' assert { type: 'json' }
 import { CQWW_ENTITIES } from '@ham2k/lib-cqmag-data'
 
 const WAE_IOTA = Object.values(CQWW_ENTITIES)
