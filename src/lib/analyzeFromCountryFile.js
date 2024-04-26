@@ -122,10 +122,15 @@ export function annotateFromCountryFile (info, options = {}) {
   if (results) {
     Object.keys(results).forEach((key) => {
       if (destination[key] && destination[key] !== results[key]) {
-        destination[`${key}Original`] = destination[key]
+        if (options.override !== false) {
+          destination[`${key}Original`] = destination[key]
+          destination[key] = results[key]
+        } else {
+          destination[`${key}CountryFiles`] = results[key]
+        }
+      } else {
+        destination[key] = results[key]
       }
-
-      destination[key] = results[key]
     })
   }
 

@@ -15,7 +15,7 @@ describe('Country File analyzis and annotation', () => {
 
     it('should find the Country File version', () => {
       const info = analyzeFromCountryFile({ call: 'VERSION' })
-      expect(info.entityName).toEqual('Haiti')
+      expect(info.entityName).toEqual('Algeria')
     })
 
     it('should annotate from a DXCC code', () => {
@@ -203,11 +203,22 @@ describe('Country File analyzis and annotation', () => {
         entityPrefix: 'K',
         entityName: 'USA'
       }
-      annotateFromCountryFile(info)
+      annotateFromCountryFile(info, { override: true })
       expect(info.entityPrefix).toEqual('K')
       expect(info.entityPrefixOriginal).toEqual(undefined)
       expect(info.entityName).toEqual('United States')
       expect(info.entityNameOriginal).toEqual('USA')
+
+      info = {
+        call: 'N0CALL',
+        entityPrefix: 'K',
+        entityName: 'USA'
+      }
+      annotateFromCountryFile(info, { override: false })
+      expect(info.entityPrefix).toEqual('K')
+      expect(info.entityPrefixOriginal).toEqual(undefined)
+      expect(info.entityNameCountryFiles).toEqual('United States')
+      expect(info.entityName).toEqual('USA')
     })
   })
 
