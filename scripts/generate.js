@@ -5,7 +5,7 @@ import path from 'path'
 console.log('Preprocessing Country File')
 
 /* eslint-disable n/handle-callback-err */
-const ctyCSV = fs.readFileSync('data/bigcty-20240420.csv', 'utf8', (err, data) => data)
+const ctyCSV = fs.readFileSync('data/bigcty-20241015.csv', 'utf8', (err, data) => data)
 
 const indexes = parseCountryFile(ctyCSV)
 
