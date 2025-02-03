@@ -15,7 +15,7 @@ describe('Country File analyzis and annotation', () => {
 
     it('should find the Country File version', () => {
       const info = analyzeFromCountryFile({ call: 'VERSION' })
-      expect(info.entityName).toEqual('Greenland')
+      expect(info.entityName).toEqual('Clipperton Island')
     })
 
     it('should annotate from a DXCC code', () => {
