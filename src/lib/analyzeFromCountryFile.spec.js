@@ -1,7 +1,7 @@
 import { analyzeFromCountryFile, annotateFromCountryFile, setCountryFileData } from './analyzeFromCountryFile'
 import { useBuiltinCountryFile } from '../index.js'
 
-describe('Country File analyzis and annotation', () => {
+describe('Country File analysis and annotations', () => {
   beforeAll(() => {
     useBuiltinCountryFile()
   })
@@ -71,7 +71,7 @@ describe('Country File analyzis and annotation', () => {
 
       info = analyzeFromCountryFile({ call: 'UQ9Q', baseCall: 'UQ9Q', prefix: 'UQ9', isoPrefix: 'UQ' })
       expect(info.entityPrefix).toEqual('UN')
-      expect(info.ituZone).toEqual(31)
+      expect(info.ituZone).toEqual(30)
 
       info = analyzeFromCountryFile({ call: 'VP2EAAA', baseCall: 'VP2EAAA', prefix: 'VP2', isoPrefix: 'VP' })
       expect(info.entityPrefix).toEqual('VP2E')
@@ -162,7 +162,8 @@ describe('Country File analyzis and annotation', () => {
     })
 
     it('should handle prefixed calls', () => {
-      const info = analyzeFromCountryFile({
+      let info
+      info = analyzeFromCountryFile({
         call: 'VP2V/N0CALL',
         baseCall: 'N0CALL',
         ituPrefix: 'VP',
@@ -170,6 +171,47 @@ describe('Country File analyzis and annotation', () => {
         preindicator: 'VP2V'
       })
       expect(info.entityPrefix).toEqual('VP2V')
+
+      info = analyzeFromCountryFile({
+        call: 'F/FR1FF',
+        baseCall: 'FR1FF',
+        ituPrefix: 'F',
+        prefix: 'F',
+        preindicator: 'F'
+      })
+      expect(info.entityPrefix).toEqual('F')
+
+
+      info = analyzeFromCountryFile({
+        call: 'FR1FF/F',
+        baseCall: 'FR1FF',
+        ituPrefix: 'F',
+        prefix: 'F',
+        postindicators: ['F']
+      })
+      expect(info.entityPrefix).toEqual('F')
+    })
+
+    it('should handle MM indicators', () => {
+      let info
+      info = analyzeFromCountryFile({
+        call: 'N0CALL/MM',
+        baseCall: 'N0CALL',
+        ituPrefix: 'N',
+        prefix: 'N0',
+        postindicators: ['MM'],
+        indicators: ['MM']
+      })
+      expect(info.entityPrefix).toEqual('K')
+
+      info = analyzeFromCountryFile({
+        call: 'MM/N0CALL',
+        baseCall: 'N0CALL',
+        ituPrefix: 'MM',
+        prefix: 'MM',
+        preindicator: 'MM',
+      })
+      expect(info.entityPrefix).toEqual('GM')
     })
 
     it('should get correct zones for US States', () => {

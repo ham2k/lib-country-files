@@ -46,7 +46,7 @@ export function analyzeFromCountryFile (info, options = {}) {
     let effectiveCall = baseCall ?? call ?? ''
     const effectivePrefix = preindicator ?? prefix // the preindicator can be longer than a prefix
 
-    if (effectivePrefix && (!effectiveCall || !effectiveCall.startsWith(effectivePrefix))) { effectiveCall = effectivePrefix }
+    if (effectivePrefix) { effectiveCall = effectivePrefix }
 
     let i = effectiveCall.length
     while (!match && i > 0) {
