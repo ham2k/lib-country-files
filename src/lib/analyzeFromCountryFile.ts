@@ -1,38 +1,53 @@
-import { CQWW_ENTITIES_BY_PREFIX } from '@ham2k/lib-cqmag-data'
+import { CQWW_ENTITIES_BY_PREFIX, type CQWWEntity } from '@ham2k/lib-cqmag-data'
 
-import { CQZONES_FOR_STATES } from '../data/cqzonesForStates.js'
+import { CQZONES_FOR_STATES } from '../data/cqzonesForStates'
+
+import type { CFIndexes, CFEntity, AnnotatedCallInfo, CFMatch, CombinedCallInfo } from '../types'
 
 const WAE_IOTA = Object.values(CQWW_ENTITIES_BY_PREFIX)
-  .filter(x => x.iota)
-  .reduce((h, x) => ({...h, [x.iota]: x, [x.iota2 ?? x.iota]: x}), {})
+  .filter((x): x is CQWWEntity & { iota: string } => !!x.iota)
+  .reduce((h, x) => ({ ...h, [x.iota]: x, [x.iota2 ?? x.iota]: x }), {} as Record<string, CQWWEntity>)
 const WAE_REGIONS = Object.values(CQWW_ENTITIES_BY_PREFIX)
-  .filter(x => x.regionCode)
-  .reduce((h, x) => ({...h, [x.regionCode]: x}), {})
+  .filter((x): x is CQWWEntity & { regionCode: string } => !!x.regionCode)
+  .reduce((h, x) => ({ ...h, [x.regionCode]: x }), {} as Record<string, CQWWEntity>)
 
-let CTYIndexes = {}
-let DXCC_ENTITIES_BY_CODE = {}
+let CTYIndexes: CFIndexes = {
+  entities: {},
+  exact: {},
+  prefix: {},
+  prefixWAE: {},
+  exactWAE: {}
+}
+let DXCC_ENTITIES_BY_CODE: Record<number, CFEntity> = {}
 
-export function setCountryFileData (indexes) {
+export function setCountryFileData(indexes: CFIndexes): void {
   CTYIndexes = indexes
   DXCC_ENTITIES_BY_CODE = Object.values(indexes.entities)
     .filter((e) => !e.isWAE)
-    .reduce((h, e) => ({...h, [e.dxccCode]: e}), {})
+    .reduce((h, e) => ({ ...h, [e.dxccCode]: e }), {} as Record<number, CFEntity>)
 
   Object.values(WAE_REGIONS).forEach(x => {
     CTYIndexes.entities[x.entityPrefix].regionCode = x.regionCode
   })
 }
 
-export function analyzeFromCountryFile (info, options = {}) {
-  const { call, baseCall, prefix, preindicator, dxccCode, regionCode, state, entityPrefix } = info
-  let match
+type AnalyzeOptions = {
+  wae?: boolean
+  refs?: {
+    iota?: Record<string, boolean>
+  }
+}
+
+export function analyzeFromCountryFile(info: AnnotatedCallInfo, options: AnalyzeOptions = {}): AnnotatedCallInfo {
+  const { call, baseCall, prefixOverride, dxccCode, regionCode, state, prefix, entityPrefix } = info
+  let match: CFMatch | undefined
 
   if (options.wae) {
-    match = match ?? CTYIndexes.exactWAE[call]
+    match = match ?? CTYIndexes.exactWAE[call ?? '']
   }
-  match = match ?? CTYIndexes.exact[call]
+  match = match ?? CTYIndexes.exact[call ?? '']
   if (options.wae) {
-    match = match ?? CTYIndexes.exactWAE[baseCall]
+    match = match ?? CTYIndexes.exactWAE[baseCall ?? '']
   }
   match = match ?? (baseCall && CTYIndexes.exact[baseCall])
 
@@ -43,10 +58,8 @@ export function analyzeFromCountryFile (info, options = {}) {
   if (!match) {
     // If call had a prefix or postfix modifier that replaces the call prefix, then use that for lookup,
     // otherwise use the base part of the callsign, which has been stripped out of any other indicators
-    let effectiveCall = baseCall ?? call ?? ''
-    const effectivePrefix = preindicator ?? prefix // the preindicator can be longer than a prefix
-
-    if (effectivePrefix) { effectiveCall = effectivePrefix }
+    let effectiveCall = baseCall ?? call ?? prefix ?? ''
+    if (prefixOverride) { effectiveCall = prefixOverride }
 
     let i = effectiveCall.length
     while (!match && i > 0) {
@@ -74,11 +87,11 @@ export function analyzeFromCountryFile (info, options = {}) {
   }
 
   // Special case: Guantanamo uses the KG4 prefix, but only for callsigns with 2 suffix letters
-  if (match?.p === 'KG4' && call && call.length !== 5 && !info?.postindicators?.includes('KG4')) {
+  if (match?.p === 'KG4' && call && call.length !== 5 && !info?.postindicators?.includes('KG4') && prefixOverride !== 'KG4') {
     match = { p: 'K', matchSource: 'exception', matchNote: 'Guantanamo uses KG4 prefix, but only for callsigns with 2 suffix letters' }
   }
 
-  if (!match && CTYIndexes.entities[entityPrefix]) {
+  if (!match && entityPrefix && CTYIndexes.entities[entityPrefix]) {
     match = { p: entityPrefix, matchSource: 'entity prefix' }
   }
 
@@ -86,7 +99,7 @@ export function analyzeFromCountryFile (info, options = {}) {
     match = { p: DXCC_ENTITIES_BY_CODE[dxccCode].entityPrefix, matchSource: 'dxcc code' }
   }
 
-  const parts = {}
+  const parts = {} as AnnotatedCallInfo
 
   if (match?.p && CTYIndexes.entities[match.p]) {
     const entity = CTYIndexes.entities[match.p]
@@ -105,7 +118,7 @@ export function analyzeFromCountryFile (info, options = {}) {
     parts.locSource = 'prefix'
   }
 
-  if (state && CQZONES_FOR_STATES[parts.entityName]) {
+  if (state && parts.entityName && CQZONES_FOR_STATES[parts.entityName]) {
     const altZone = CQZONES_FOR_STATES[parts.entityName][state.toUpperCase()]
     if (altZone && altZone !== parts.cqZone) {
       parts.cqZone = altZone
@@ -115,21 +128,32 @@ export function analyzeFromCountryFile (info, options = {}) {
   return parts
 }
 
-export function annotateFromCountryFile (info, options = {}) {
+type AnnotateOptions = AnalyzeOptions & {
+  destination?: AnnotatedCallInfo
+  override?: boolean
+}
+
+export function annotateFromCountryFile(info: AnnotatedCallInfo, options: AnnotateOptions = {}): AnnotatedCallInfo {
   const results = analyzeFromCountryFile(info, options)
   const destination = options.destination ?? info
 
   if (results) {
     Object.keys(results).forEach((key) => {
-      if (destination[key] && destination[key] !== results[key]) {
+      const typedKey = key as keyof CombinedCallInfo
+      const resultValue = results[typedKey]
+      const destValue = destination[typedKey]
+
+      if (destValue !== undefined && destValue !== resultValue) {
         if (options.override !== false) {
-          destination[`${key}Original`] = destination[key]
-          destination[key] = results[key]
+          destination.originalValues = destination.originalValues || {} as CombinedCallInfo
+            ; (destination.originalValues as any)[typedKey] = destValue
+            ; (destination as any)[typedKey] = resultValue
         } else {
-          destination[`${key}CountryFiles`] = results[key]
+          destination.cfValues = destination.cfValues || {} as CombinedCallInfo
+            ; (destination.cfValues as any)[typedKey] = resultValue
         }
       } else {
-        destination[key] = results[key]
+        ; (destination as any)[typedKey] = resultValue
       }
     })
   }

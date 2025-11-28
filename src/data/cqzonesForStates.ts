@@ -1,4 +1,11 @@
-export const CQZONES_FOR_STATES = {
+
+export interface CQZonesForStates {
+  [country: string]: {
+    [stateCode: string]: number
+  }
+}
+
+export const CQZONES_FOR_STATES: CQZonesForStates = {
   "Canada": {
     "AB": 4,
     "BC": 3,
@@ -68,3 +75,4 @@ export const CQZONES_FOR_STATES = {
     "WY": 4
   }
 }
+

@@ -1,18 +1,36 @@
 {
   "name": "@ham2k/lib-country-files",
-  "version": "0.10.20250131",
+  "version": "0.11.20251125",
   "type": "module",
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "devDependencies": {
-    "jest": "^29",
-    "standard": "^17"
+    "@jest/core": "^30.2.0",
+    "@jest/test-sequencer": "^30.2.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.1",
+    "jest": "^30.2.0",
+    "standard": "^17",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   },
   "scripts": {
-    "generate": "node ./scripts/generate.js",
-    "test": "node --experimental-vm-modules ./node_modules/.bin/jest"
+    "build": "tsc",
+    "generate": "tsx ./scripts/generate.ts",
+    "test": "node --experimental-vm-modules ./node_modules/.bin/jest",
+    "prepublishOnly": "npm run build"
   },
   "standard": {
     "env": [
@@ -20,6 +38,7 @@
     ]
   },
   "dependencies": {
-    "@ham2k/lib-cqmag-data": "^0.2"
+    "@ham2k/lib-cqmag-data": "^0.2",
+    "@ham2k/lib-callsigns": "^0.4.2"
   }
 }

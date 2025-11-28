@@ -2,7 +2,7 @@ import { parseCountryFile } from './parseCountryFile'
 import fs from 'fs'
 
 /* eslint-disable n/handle-callback-err */
-const ctyCSV = fs.readFileSync('data/bigcty-20241015.csv', 'utf8', (err, data) => data)
+const ctyCSV = fs.readFileSync('data/bigcty-20251125.csv', 'utf8')
 
 describe('parseCountryFile', () => {
   it('should work', () => {
@@ -12,3 +12,4 @@ describe('parseCountryFile', () => {
     expect(cty)
   })
 })
+

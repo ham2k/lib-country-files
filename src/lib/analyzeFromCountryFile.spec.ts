@@ -1,5 +1,6 @@
-import { analyzeFromCountryFile, annotateFromCountryFile, setCountryFileData } from './analyzeFromCountryFile'
-import { useBuiltinCountryFile } from '../index.js'
+import { analyzeFromCountryFile, annotateFromCountryFile } from './analyzeFromCountryFile'
+import type { AnnotatedCallInfo } from '../types'
+import { useBuiltinCountryFile } from '../index'
 
 describe('Country File analysis and annotations', () => {
   beforeAll(() => {
@@ -8,14 +9,14 @@ describe('Country File analysis and annotations', () => {
 
   describe('analyzeFromCountryFile', () => {
     it('should work', () => {
-      const info = analyzeFromCountryFile({ call: 'KI2D', baseCall: 'KI2D', prefix: 'KI2', isoPrefix: 'KI' })
+      const info: AnnotatedCallInfo = analyzeFromCountryFile({ call: 'KI2D', baseCall: 'KI2D', prefix: 'KI2', isoPrefix: 'KI' })
       expect(info.entityPrefix).toEqual('K')
       expect(info.entityName).toEqual('United States')
     })
 
     it('should find the Country File version', () => {
       const info = analyzeFromCountryFile({ call: 'VERSION' })
-      expect(info.entityName).toEqual('Clipperton Island')
+      expect(info.entityName).toEqual('Chesterfield Islands')
     })
 
     it('should annotate from a DXCC code', () => {
@@ -71,10 +72,7 @@ describe('Country File analysis and annotations', () => {
 
       info = analyzeFromCountryFile({ call: 'UQ9Q', baseCall: 'UQ9Q', prefix: 'UQ9', isoPrefix: 'UQ' })
       expect(info.entityPrefix).toEqual('UN')
-      expect(info.ituZone).toEqual(30)
-
-      info = analyzeFromCountryFile({ call: 'VP2EAAA', baseCall: 'VP2EAAA', prefix: 'VP2', isoPrefix: 'VP' })
-      expect(info.entityPrefix).toEqual('VP2E')
+      expect(info.ituZone).toEqual(31)
 
       info = analyzeFromCountryFile({ call: 'VP2EAAA', baseCall: 'VP2EAAA', prefix: 'VP2', isoPrefix: 'VP' })
       expect(info.entityPrefix).toEqual('VP2E')
@@ -106,7 +104,7 @@ describe('Country File analysis and annotations', () => {
       expect(info.ituZone).toEqual(28)
       expect(info.continent).toEqual('EU')
 
-      info = analyzeFromCountryFile({ call: 'IT4LY' }, { wae: true, refs: { iota: { 'EU-025': true }}})
+      info = analyzeFromCountryFile({ call: 'IT4LY' }, { wae: true, refs: { iota: { 'EU-025': true } } })
       expect(info.entityPrefix).toEqual('*IT9') // Sicily
       expect(info.ituZone).toEqual(28)
       expect(info.continent).toEqual('EU')
@@ -118,13 +116,13 @@ describe('Country File analysis and annotations', () => {
       expect(info.continent).toEqual('EU')
       expect(info.regionCode).toEqual("SY")
 
-      info = analyzeFromCountryFile({ call: 'TA9IOTA' }, { wae: false, refs: { iota: { 'EU-186': true }}})
+      info = analyzeFromCountryFile({ call: 'TA9IOTA' }, { wae: false, refs: { iota: { 'EU-186': true } } })
       expect(info.entityPrefix).toEqual('TA') // Turkey
       expect(info.ituZone).toEqual(39)
       expect(info.continent).toEqual('AS')
       expect(info.regionCode).toEqual(undefined)
 
-      info = analyzeFromCountryFile({ call: 'TA9IOTA' }, { wae: true, refs: { iota: { 'EU-186': true }}})
+      info = analyzeFromCountryFile({ call: 'TA9IOTA' }, { wae: true, refs: { iota: { 'EU-186': true } } })
       expect(info.entityPrefix).toEqual('*TA1') // European Turkey
       expect(info.ituZone).toEqual(39)
       expect(info.continent).toEqual('EU')
@@ -154,10 +152,16 @@ describe('Country File analysis and annotations', () => {
       info = analyzeFromCountryFile({ call: 'KG4ABC' })
       expect(info.entityPrefix).toEqual('K')
 
-      info = analyzeFromCountryFile({ call: 'N0CALL/KG4', postindicators: ['KG4'], prefix: 'KG4' })
+      info = analyzeFromCountryFile({ call: 'KG4/N0CALL', prefixOverride: 'KG4' })
       expect(info.entityPrefix).toEqual('KG4')
 
-      info = analyzeFromCountryFile({ call: 'KG4ABC/KG4', postindicators: ['KG4'], prefix: 'KG4' })
+      info = analyzeFromCountryFile({ call: 'KG4/KG4ABC', prefixOverride: 'KG4' })
+      expect(info.entityPrefix).toEqual('KG4')
+
+      info = analyzeFromCountryFile({ call: 'KG4/N0CALL', prefixOverride: 'KG4' })
+      expect(info.entityPrefix).toEqual('KG4')
+
+      info = analyzeFromCountryFile({ call: 'KG4/KG4ABC', prefixOverride: 'KG4' })
       expect(info.entityPrefix).toEqual('KG4')
     })
 
@@ -168,7 +172,7 @@ describe('Country File analysis and annotations', () => {
         baseCall: 'N0CALL',
         ituPrefix: 'VP',
         prefix: 'VP2',
-        preindicator: 'VP2V'
+        prefixOverride: 'VP2V'
       })
       expect(info.entityPrefix).toEqual('VP2V')
 
@@ -177,17 +181,7 @@ describe('Country File analysis and annotations', () => {
         baseCall: 'FR1FF',
         ituPrefix: 'F',
         prefix: 'F',
-        preindicator: 'F'
-      })
-      expect(info.entityPrefix).toEqual('F')
-
-
-      info = analyzeFromCountryFile({
-        call: 'FR1FF/F',
-        baseCall: 'FR1FF',
-        ituPrefix: 'F',
-        prefix: 'F',
-        postindicators: ['F']
+        prefixOverride: 'F'
       })
       expect(info.entityPrefix).toEqual('F')
     })
@@ -209,7 +203,7 @@ describe('Country File analysis and annotations', () => {
         baseCall: 'N0CALL',
         ituPrefix: 'MM',
         prefix: 'MM',
-        preindicator: 'MM',
+        prefixOverride: 'MM',
       })
       expect(info.entityPrefix).toEqual('GM')
     })
@@ -232,13 +226,13 @@ describe('Country File analysis and annotations', () => {
 
   describe('annotateFromCountryFile', () => {
     it('should manage conflicts with existing info', () => {
-      let info = {
+      let info: AnnotatedCallInfo = {
         call: 'N0CALL',
         entityPrefix: 'VE'
       }
       annotateFromCountryFile(info)
       expect(info.entityPrefix).toEqual('K')
-      expect(info.entityPrefixOriginal).toEqual('VE')
+      expect(info.originalValues?.entityPrefix).toEqual('VE')
 
       info = {
         call: 'N0CALL',
@@ -247,9 +241,9 @@ describe('Country File analysis and annotations', () => {
       }
       annotateFromCountryFile(info, { override: true })
       expect(info.entityPrefix).toEqual('K')
-      expect(info.entityPrefixOriginal).toEqual(undefined)
+      expect(info.originalValues?.entityPrefix).toEqual(undefined)
       expect(info.entityName).toEqual('United States')
-      expect(info.entityNameOriginal).toEqual('USA')
+      expect(info.originalValues?.entityName).toEqual('USA')
 
       info = {
         call: 'N0CALL',
@@ -258,8 +252,8 @@ describe('Country File analysis and annotations', () => {
       }
       annotateFromCountryFile(info, { override: false })
       expect(info.entityPrefix).toEqual('K')
-      expect(info.entityPrefixOriginal).toEqual(undefined)
-      expect(info.entityNameCountryFiles).toEqual('United States')
+      expect(info.originalValues?.entityPrefix).toEqual(undefined)
+      expect(info.cfValues?.entityName).toEqual('United States')
       expect(info.entityName).toEqual('USA')
     })
   })
@@ -296,3 +290,4 @@ describe('Country File analysis and annotations', () => {
     expect(info.dxccCode).toEqual(206)
   })
 })
+
