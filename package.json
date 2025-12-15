@@ -38,7 +38,7 @@
     ]
   },
   "dependencies": {
-    "@ham2k/lib-cqmag-data": "^0.2",
+    "@ham2k/lib-cqmag-data": "^0.3",
     "@ham2k/lib-callsigns": "^0.4.2"
   }
 }
