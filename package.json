@@ -1,13 +1,15 @@
 {
   "name": "@ham2k/lib-country-files",
-  "version": "0.11.20251125",
+  "version": "0.12.20251125",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
     }
   },
   "files": [
@@ -23,11 +25,12 @@
     "standard": "^17",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
+    "tsup": "^8.0.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsup",
     "generate": "tsx ./scripts/generate.ts",
     "test": "node --experimental-vm-modules ./node_modules/.bin/jest",
     "prepublishOnly": "npm run build"
@@ -38,7 +41,7 @@
     ]
   },
   "dependencies": {
-    "@ham2k/lib-cqmag-data": "^0.3",
-    "@ham2k/lib-callsigns": "^0.4.2"
+    "@ham2k/lib-cqmag-data": "^0.4",
+    "@ham2k/lib-callsigns": "^0.5"
   }
 }
