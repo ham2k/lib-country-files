@@ -1,4 +1,4 @@
-# lib-country-file
+# This repository has been moved
 
-A JavaScript library for using the **Amateur Radio Country Files** data collected by Jim Reisert AD1C and available from https://www.country-files.com/
+It now located at https://github.com/ham2k/ham-js-libs/tree/main/packages/lib-country-files
 
